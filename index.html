@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kesiapan Digital UMKM</title>
+<meta name="description" content="Aplikasi input data wawancara lapangan — kesiapan digital UMKM Kota Bengkulu (adaptasi INDI 4.0).">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="INDI 4.0 UMKM">
+<meta name="theme-color" content="#15803d">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script src="items.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+  // Mendaftarkan service worker supaya Android menawarkan "Install app" dan
+  // aplikasi tetap bisa dibuka walau sinyal nol. Lihat sw.js untuk detail —
+  // ini TIDAK menyentuh cara data wawancara dikirim/diantrekan.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () { /* diam-diam gagal, aplikasi tetap jalan tanpa cache offline */ });
+    });
+  }
+</script>
+</body>
+</html>
