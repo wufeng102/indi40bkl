@@ -1,17 +1,21 @@
 /**
- * Service worker — HANYA untuk membuat aplikasi mahasiswa (index.html) bisa
- * di-"Install" sebagai aplikasi Android dan tetap bisa DIBUKA walau sinyal
+ * Service worker — satu file ini dipakai bersama oleh aplikasi mahasiswa
+ * (index.html) DAN dashboard dosen (dashboard.html), supaya keduanya bisa
+ * di-"Install" sebagai aplikasi terpisah dan tetap bisa DIBUKA walau sinyal
  * nol (tampilan appnya, bukan datanya — data wawancara tetap diatur oleh
  * antrean di app.js, file ini sama sekali tidak menyentuh itu).
  *
- * PENTING kalau Anda mengedit file aplikasi (style.css/items.js/app.js/dst):
- * naikkan angka di CACHE_NAME baris di bawah (mis. 'v1' -> 'v2'), lalu
- * commit ulang. Tanpa itu, HP mahasiswa yang sudah pernah membuka aplikasi
- * bisa tetap memakai file LAMA yang tersimpan di cache.
+ * PENTING kalau Anda mengedit file aplikasi (style.css/items.js/app.js/
+ * dashboard.js/dst): naikkan angka di CACHE_NAME baris di bawah (mis. 'v2'
+ * -> 'v3'), lalu commit ulang. Tanpa itu, HP yang sudah pernah membuka
+ * aplikasi bisa tetap memakai file LAMA yang tersimpan di cache.
  */
-var CACHE_NAME = 'indi40-umkm-shell-v1';
+var CACHE_NAME = 'indi40-umkm-shell-v2';
 
 // Hanya file "cangkang" aplikasi (bukan data) yang disimpan di cache.
+// v2: menambahkan dashboard.html/.css/.js + manifest-dashboard.json supaya
+// dashboard (dosen) juga bisa di-"Install" dan dibuka tanpa sinyal, sebagai
+// aplikasi terpisah dari aplikasi mahasiswa (index.html).
 var FILE_CANGKANG = [
   './',
   './index.html',
@@ -20,6 +24,10 @@ var FILE_CANGKANG = [
   './app.js',
   './config.js',
   './manifest.json',
+  './dashboard.html',
+  './dashboard.css',
+  './dashboard.js',
+  './manifest-dashboard.json',
   './icon.png',
   './icon-192.png',
   './icon-512.png',

@@ -2,8 +2,16 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dashboard — Kesiapan Digital UMKM Kota Bengkulu</title>
+<meta name="description" content="Dashboard pemantauan progres wawancara lapangan — kesiapan digital UMKM Kota Bengkulu.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dashboard UMKM">
+<meta name="theme-color" content="#15803d">
+<link rel="manifest" href="manifest-dashboard.json">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
 <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
@@ -11,5 +19,14 @@
 <script src="items.js"></script>
 <script src="config.js"></script>
 <script src="dashboard.js"></script>
+<script>
+  // Sama seperti di index.html — supaya dashboard juga bisa ditawari "Install
+  // app" sendiri (terpisah dari aplikasi mahasiswa, ikon & tujuan beda).
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () { /* diam-diam gagal, dashboard tetap jalan tanpa cache offline */ });
+    });
+  }
+</script>
 </body>
 </html>

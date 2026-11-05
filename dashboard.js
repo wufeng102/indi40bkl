@@ -257,7 +257,11 @@
   function kartuAnalisisAI() {
     var card = el('div', { class: 'card' }, [
       el('h2', {}, ['Analisis AI (Claude)']),
-      el('div', { class: 'hint' }, ['Ringkasan otomatis dari data yang sudah terkumpul. Tekan tombol untuk membuat ringkasan baru (butuh CLAUDE_API_KEY sudah diisi di Script Properties — lihat README).']),
+      el('div', { class: 'hint' }, [
+        state.analisis
+          ? 'Ringkasan otomatis dari data yang sudah terkumpul. Tekan tombol untuk membuat ringkasan baru.'
+          : 'Ringkasan otomatis dari data yang sudah terkumpul. Tekan tombol untuk membuat ringkasan baru (kalau belum pernah dipakai, pastikan dulu CLAUDE_API_KEY sudah diisi di Script Properties — lihat README; tulisan ini akan hilang setelah sekali berhasil).',
+      ]),
     ]);
     card.appendChild(el('button', {
       class: 'btn-primary', disabled: state.memuatAnalisis ? 'disabled' : null,
