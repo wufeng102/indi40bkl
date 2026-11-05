@@ -6,11 +6,18 @@
  * antrean di app.js, file ini sama sekali tidak menyentuh itu).
  *
  * PENTING kalau Anda mengedit file aplikasi (style.css/items.js/app.js/
- * dashboard.js/dst): naikkan angka di CACHE_NAME baris di bawah (mis. 'v3'
- * -> 'v4'), lalu commit ulang. Tanpa itu, HP yang sudah pernah membuka
+ * dashboard.js/dst): naikkan angka di CACHE_NAME baris di bawah (mis. 'v4'
+ * -> 'v5'), lalu commit ulang. Tanpa itu, HP yang sudah pernah membuka
  * aplikasi bisa tetap memakai file LAMA yang tersimpan di cache.
+ *
+ * KHUSUS config.js: TIDAK berlaku aturan di atas. File itu isinya
+ * pengaturan (URL server, nama proyek) yang memang didesain untuk diedit
+ * langsung di GitHub kapan saja tanpa commit ulang semua file. Supaya
+ * perubahannya langsung kepakai di HP yang sudah install (tidak nunggu versi
+ * cache dinaikkan), config.js SENGAJA tidak ikut aturan cache file lain di
+ * bawah — lihat penanganan khusus di fetch handler paling bawah.
  */
-var CACHE_NAME = 'indi40-umkm-shell-v3';
+var CACHE_NAME = 'indi40-umkm-shell-v4';
 
 // Hanya file "cangkang" aplikasi (bukan data) yang disimpan di cache.
 // v2: menambahkan dashboard.html/.css/.js + manifest-dashboard.json supaya
@@ -19,6 +26,9 @@ var CACHE_NAME = 'indi40-umkm-shell-v3';
 // v3: menambahkan "id" eksplisit di manifest.json & manifest-dashboard.json
 // (lihat README — ini supaya Chrome tidak bingung membedakan 2 aplikasi
 // yang satu origin/scope).
+// v4: config.js sekarang network-first (lihat fetch handler) supaya edit
+// ENDPOINT_URL langsung di GitHub tidak lagi butuh HP di-uninstall/pasang
+// ulang untuk kepakai.
 var FILE_CANGKANG = [
   './',
   './index.html',
@@ -64,9 +74,28 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
-  // Stale-while-revalidate: langsung balas dari cache kalau ada (cepat +
-  // tetap bisa dibuka tanpa sinyal), sambil diam-diam ambil versi terbaru
-  // dari jaringan untuk dipakai lain kali.
+  // config.js: NETWORK-FIRST. Ini satu-satunya file yang memang didesain
+  // untuk diedit langsung di GitHub tanpa menaikkan CACHE_NAME (isinya
+  // ENDPOINT_URL/NAMA_PROYEK, bukan "kode"). Kalau selalu diambil dari
+  // jaringan dulu, perubahannya langsung kepakai di HP yang sudah install.
+  // Cache cuma dipakai sebagai cadangan kalau benar-benar offline.
+  if (/\/config\.js$/.test(new URL(req.url).pathname)) {
+    event.respondWith(
+      fetch(req).then(function (res) {
+        if (res && res.ok) {
+          caches.open(CACHE_NAME).then(function (cache) { cache.put(req, res.clone()); });
+        }
+        return res;
+      }).catch(function () {
+        return caches.open(CACHE_NAME).then(function (cache) { return cache.match(req); });
+      })
+    );
+    return;
+  }
+
+  // File lainnya: stale-while-revalidate — langsung balas dari cache kalau
+  // ada (cepat + tetap bisa dibuka tanpa sinyal), sambil diam-diam ambil
+  // versi terbaru dari jaringan untuk dipakai lain kali.
   event.respondWith(
     caches.open(CACHE_NAME).then(function (cache) {
       return cache.match(req).then(function (cached) {
