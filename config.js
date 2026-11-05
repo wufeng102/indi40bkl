@@ -6,7 +6,7 @@
  * Contoh:
  * var ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
  */
-var ENDPOINT_URL = 'GANTI_DENGAN_URL_WEB_APP_ANDA';
+var ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbzpqLYdLbj5vd5xMt6dhMPRF9m9YQWg5cgEasgE6ap274dhtEXmXe_u2PnnBJySJDc8/exec';
 
 // Nama proyek, ditampilkan di header aplikasi. Boleh diganti.
 var NAMA_PROYEK = 'Kesiapan Digital UMKM Kota Bengkulu';
