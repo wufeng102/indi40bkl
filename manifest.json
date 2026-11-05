@@ -2,6 +2,7 @@
   "name": "Kesiapan Digital UMKM Bengkulu",
   "short_name": "INDI 4.0 UMKM",
   "description": "Aplikasi input data wawancara lapangan — kesiapan digital UMKM Kota Bengkulu.",
+  "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

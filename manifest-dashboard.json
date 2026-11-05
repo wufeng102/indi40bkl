@@ -2,6 +2,7 @@
   "name": "Dashboard Kesiapan Digital UMKM Bengkulu",
   "short_name": "Dashboard UMKM",
   "description": "Dashboard pemantauan progres wawancara lapangan — kesiapan digital UMKM Kota Bengkulu.",
+  "id": "./dashboard.html",
   "start_url": "./dashboard.html",
   "scope": "./",
   "display": "standalone",

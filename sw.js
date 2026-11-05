@@ -6,16 +6,19 @@
  * antrean di app.js, file ini sama sekali tidak menyentuh itu).
  *
  * PENTING kalau Anda mengedit file aplikasi (style.css/items.js/app.js/
- * dashboard.js/dst): naikkan angka di CACHE_NAME baris di bawah (mis. 'v2'
- * -> 'v3'), lalu commit ulang. Tanpa itu, HP yang sudah pernah membuka
+ * dashboard.js/dst): naikkan angka di CACHE_NAME baris di bawah (mis. 'v3'
+ * -> 'v4'), lalu commit ulang. Tanpa itu, HP yang sudah pernah membuka
  * aplikasi bisa tetap memakai file LAMA yang tersimpan di cache.
  */
-var CACHE_NAME = 'indi40-umkm-shell-v2';
+var CACHE_NAME = 'indi40-umkm-shell-v3';
 
 // Hanya file "cangkang" aplikasi (bukan data) yang disimpan di cache.
 // v2: menambahkan dashboard.html/.css/.js + manifest-dashboard.json supaya
 // dashboard (dosen) juga bisa di-"Install" dan dibuka tanpa sinyal, sebagai
 // aplikasi terpisah dari aplikasi mahasiswa (index.html).
+// v3: menambahkan "id" eksplisit di manifest.json & manifest-dashboard.json
+// (lihat README — ini supaya Chrome tidak bingung membedakan 2 aplikasi
+// yang satu origin/scope).
 var FILE_CANGKANG = [
   './',
   './index.html',
