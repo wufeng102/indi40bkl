@@ -112,6 +112,8 @@ Di langkah "Foto Usaha", mahasiswa bisa menekan tombol kamera untuk memotret lan
 
 Dashboard punya tombol **"Minta Analisis AI"** yang meringkas data yang sudah terkumpul (perbandingan sektor Produksi vs Dagang-Jasa, temuan menonjol, saran lanjutan) memakai Claude. Ini memanggil Claude lewat Apps Script di server Anda, **bukan** lewat aplikasi di HP mahasiswa.
 
+Proses ini bisa makan waktu **sampai puluhan detik** (GAS perlu memanggil Claude, dan Claude perlu menulis beberapa paragraf) — tombolnya akan menampilkan "Meminta analisis..." selama itu, ini normal, bukan macet. Dashboard menunggu sampai 90 detik sebelum dianggap gagal.
+
 Cara mengaktifkan:
 1. Siapkan API key Claude dari [console.anthropic.com](https://console.anthropic.com) (Settings > API Keys).
 2. Di editor Apps Script (Extensions > Apps Script di Sheet Anda), buka ikon gerigi **Project Settings** di kiri.

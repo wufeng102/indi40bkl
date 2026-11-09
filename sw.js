@@ -6,8 +6,8 @@
  * antrean di app.js, file ini sama sekali tidak menyentuh itu).
  *
  * PENTING kalau Anda mengedit file aplikasi (style.css/items.js/app.js/
- * dashboard.js/dst): naikkan angka di CACHE_NAME baris di bawah (mis. 'v4'
- * -> 'v5'), lalu commit ulang. Tanpa itu, HP yang sudah pernah membuka
+ * dashboard.js/dst): naikkan angka di CACHE_NAME baris di bawah (mis. 'v5'
+ * -> 'v6'), lalu commit ulang. Tanpa itu, HP yang sudah pernah membuka
  * aplikasi bisa tetap memakai file LAMA yang tersimpan di cache.
  *
  * KHUSUS config.js: TIDAK berlaku aturan di atas. File itu isinya
@@ -17,7 +17,7 @@
  * cache dinaikkan), config.js SENGAJA tidak ikut aturan cache file lain di
  * bawah — lihat penanganan khusus di fetch handler paling bawah.
  */
-var CACHE_NAME = 'indi40-umkm-shell-v4';
+var CACHE_NAME = 'indi40-umkm-shell-v5';
 
 // Hanya file "cangkang" aplikasi (bukan data) yang disimpan di cache.
 // v2: menambahkan dashboard.html/.css/.js + manifest-dashboard.json supaya
@@ -29,6 +29,9 @@ var CACHE_NAME = 'indi40-umkm-shell-v4';
 // v4: config.js sekarang network-first (lihat fetch handler) supaya edit
 // ENDPOINT_URL langsung di GitHub tidak lagi butuh HP di-uninstall/pasang
 // ulang untuk kepakai.
+// v5: dashboard.js — batas waktu tombol "Minta Analisis AI" dinaikkan dari
+// 20 detik jadi 90 detik (panggilan Claude lewat GAS memang bisa lebih dari
+// 20 detik, itu bukan tanda server bermasalah).
 var FILE_CANGKANG = [
   './',
   './index.html',

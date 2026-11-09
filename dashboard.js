@@ -27,9 +27,9 @@
     return node;
   }
 
-  function apiCall(body) {
+  function apiCall(body, timeoutMs) {
     var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    var timeout = controller ? setTimeout(function () { controller.abort(); }, 20000) : null;
+    var timeout = controller ? setTimeout(function () { controller.abort(); }, timeoutMs || 20000) : null;
     return fetch(ENDPOINT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -114,14 +114,20 @@
   function mintaAnalisisAI() {
     state.memuatAnalisis = true;
     render();
-    apiCall({ action: 'analisisAI', pin: state.pin }).then(function (json) {
+    // Timeout lebih panjang dari panggilan lain (90 detik, bukan 20 detik):
+    // ini menunggu GAS memanggil Claude dan Claude menulis beberapa paragraf
+    // analisis, yang kadang makan waktu lebih dari 20 detik — bukan berarti
+    // server bermasalah.
+    apiCall({ action: 'analisisAI', pin: state.pin }, 90000).then(function (json) {
       state.memuatAnalisis = false;
       if (json && json.status === 'ok') { state.analisis = json; }
       else { state.analisisError = (json && json.message) || 'Gagal meminta analisis.'; }
       render();
-    }).catch(function () {
+    }).catch(function (err) {
       state.memuatAnalisis = false;
-      state.analisisError = 'Tidak bisa menghubungi server Claude lewat GAS.';
+      state.analisisError = (err && err.name === 'AbortError')
+        ? 'Claude belum sempat merespons dalam 90 detik. Datanya mungkin sudah banyak, coba tekan tombolnya sekali lagi — kalau tetap gagal, cek koneksi internet.'
+        : 'Tidak bisa menghubungi server Claude lewat GAS. Cek koneksi internet, lalu coba lagi.';
       render();
     });
   }
