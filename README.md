@@ -127,6 +127,24 @@ Cara mengaktifkan:
 
 Aplikasi ini sudah menangani ini secara otomatis: kalau pengiriman gagal (tidak ada sinyal), data (termasuk foto) disimpan dulu di HP (localStorage browser) dan ditandai "tertunda". Begitu sinyal kembali, aplikasi akan otomatis mencoba mengirim ulang, atau mahasiswa bisa menekan **Coba Kirim Sekarang** di layar Mulai. Data **tidak hilang** selama mahasiswa tidak menghapus data/cache browser di HP tersebut. Login PIN sendiri **butuh sinyal** (hanya sekali, saat pertama masuk) — wawancara sesudahnya boleh sepenuhnya tanpa sinyal. Tetap ingatkan mahasiswa untuk mengecek tanda "data belum terkirim" di layar Mulai sebelum pulang dari lokasi survei, dan memastikan jumlahnya nol (semua terkirim) begitu dapat sinyal — angka "progres" di layar Mulai dan di dashboard dosen hanya menghitung data yang **sudah benar-benar sampai ke server**, bukan yang masih tertunda di HP.
 
+## Data tercatat dobel/ganda (1 wawancara jadi beberapa baris)
+
+**Sejak update ini, kejadian ini sudah dicegah otomatis untuk pengiriman BARU** — jadi bagian ini relevan untuk (a) memahami kenapa itu bisa terjadi sebelumnya, dan (b) membersihkan data yang SUDAH kadung dobel di Sheet Anda sebelum update ini terpasang.
+
+**Kenapa bisa terjadi:** ini bukan mahasiswa mengirim berkali-kali dengan sengaja, dan bukan data rusak. Sebabnya adalah mekanisme "coba kirim ulang otomatis kalau sinyal lemah" (lihat bagian **Kalau sinyal lemah di lapangan** di atas) — kalau sinyal sangat lambat, HP mahasiswa bisa mengira pengiriman gagal (padahal sebenarnya sampai, hanya balasannya yang lambat/tidak sampai balik) lalu mencoba mengirim ulang data yang sama. Sebelum update ini, server tidak punya cara membedakan "ini wawancara baru" dari "ini pengiriman ulang dari data yang sama" — jadi tiap percobaan kirim dicatat sebagai baris baru.
+
+**Apa yang sudah diperbaiki:** setiap pengiriman dari HP sekarang dibekali satu kode unik tersembunyi (`id_kirim`) yang dibuat SEKALI per wawancara dan tetap sama meski dicoba kirim ulang. Server (`gas/Code.gs`) sekarang mengecek kode ini sebelum menulis baris baru — kalau kode itu sudah pernah tercatat, server membalas sukses (jadi HP mahasiswa tidak menampilkan error) tapi **tidak menulis baris baru**. Ini berlaku otomatis untuk Sheet yang sudah berjalan sekalipun — Anda tidak perlu mengubah apa pun di Sheet secara manual, kolom `id_kirim` akan ditambahkan sendiri di ujung header `Jawaban_Mentah` dan `Hasil_Skor` saat ada pengiriman pertama setelah Anda meng-update file `gas/Code.gs` ini.
+
+**Cara membersihkan data yang SUDAH dobel sekarang (manual, sekali saja):**
+
+1. Buka tab **`Hasil_Skor`**, urutkan/cari kolom `kode_usaha`, lalu cari kode usaha yang muncul lebih dari satu kali (gunakan menu **Data > Buat tampilan filter**, atau rumus `=COUNTIF(B:B, B2)` di kolom bantu untuk mempercepat cari kode usaha yang nilainya >1).
+2. Untuk kode usaha yang dobel, bandingkan baris-barisnya — biasanya isinya identik (sama persis skor/jawabannya) karena memang hasil kirim-ulang data yang sama. Simpan **satu baris saja** (baris mana pun boleh, karena isinya sama), hapus baris-baris lainnya.
+3. Lakukan hal yang sama di tab **`Jawaban_Mentah`** untuk `kode_usaha` yang sama.
+4. Kalau wawancara itu menyertakan foto: cek folder Drive "Foto Wawancara - Kesiapan Digital UMKM Bengkulu" — tiap percobaan kirim yang membawa foto akan mengunggah file foto sendiri (walau baris Sheet-nya nanti dihapus, filenya tidak otomatis terhapus), jadi akan ada beberapa file foto untuk kode usaha yang sama di folder itu. Boleh dihapus manual yang berlebih (sisakan satu), atau dibiarkan saja kalau ruang Drive tidak jadi masalah — ini tidak mempengaruhi data/skor di Sheet.
+5. Setelah baris dobel dihapus, cek dashboard dosen (progres per mahasiswa, grafik, dsb) — angkanya akan otomatis benar lagi karena dashboard selalu menghitung langsung dari isi Sheet saat ini, tidak ada data tersembunyi lain yang perlu disesuaikan.
+
+Setelah file `gas/Code.gs` versi ini dipasang (lihat Langkah 1-2 di atas), kejadian serupa untuk wawancara-wawancara BARU tidak akan terjadi lagi — Anda hanya perlu membersihkan yang sudah kadung terjadi sebelum update ini.
+
 ## Struktur data di Google Sheet
 
 - Tab **`Akun`** — peran, nama, PIN, dan target wawancara tiap akun. Boleh diedit langsung.
@@ -163,3 +181,4 @@ Jalankan ini setiap kali `items.js` atau `gas/Code.gs` diedit (lalu salin peruba
 - **Mahasiswa bilang halaman tidak berubah setelah Anda perbaiki sesuatu** → ini HAMPIR SELALU karena lupa menaikkan `CACHE_NAME` di `sw.js` (lihat bagian **Aplikasi ini "aplikasi web" (PWA)** di atas) — service worker menyajikan file lama dari cache HP. Naikkan versinya, commit ulang, minta mahasiswa tutup aplikasi sepenuhnya lalu buka lagi (bisa dua kali).
 - **Tombol "Install app" tidak muncul di Chrome Android** → pastikan dibuka lewat HTTPS (GitHub Pages otomatis HTTPS, jadi biasanya bukan ini), coba muat ulang halaman sekali lagi (kadang Chrome butuh dua kunjungan), atau langsung pakai menu titik tiga Chrome > **Install app** secara manual — hasilnya sama saja.
 - **Tombol "Install app" muncul di `index.html` tapi tidak di `dashboard.html` (atau sebaliknya)** → pastikan file `manifest-dashboard.json` ikut ter-upload ke GitHub Pages (lihat daftar file di Langkah 2.2) dan commit-nya sudah selesai 1-2 menit; coba muat ulang halaman itu sekali lagi.
+- **Satu wawancara tercatat jadi beberapa baris (dobel/ganda)** → lihat bagian **Data tercatat dobel/ganda** di atas: sebabnya sinyal lemah memicu kirim-ulang otomatis, bukan kesalahan mahasiswa; pastikan `gas/Code.gs` versi terbaru ini sudah terpasang di Apps Script (supaya tidak terulang), lalu bersihkan baris dobel yang sudah ada sesuai langkah di bagian itu.

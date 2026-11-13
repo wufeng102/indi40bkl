@@ -710,6 +710,17 @@
   }
 
   // ---------- submit & queue ----------
+  // Kunci anti-duplikat: dibuat SEKALI per percobaan "Kirim Data" (dalam
+  // buildPayload, dipanggil sekali per submit), lalu ikut tersimpan di
+  // payload yang di-antre — jadi kalau sinyal lemah menyebabkan pengiriman
+  // dicoba ulang beberapa kali (otomatis maupun lewat "Coba Kirim Sekarang"),
+  // id ini TETAP SAMA di setiap percobaan, dan server (gas/Code.gs) memakainya
+  // untuk menolak menulis baris kedua kalinya untuk wawancara yang sama.
+  function buatIdKirim_() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+  }
+
   function buildPayload() {
     var a = state.answers;
     var ju = JENIS_USAHA[a.sektor];
@@ -717,6 +728,7 @@
     var skorItem = {};
     items.forEach(function (it) { skorItem[it.kode] = skorItemDariJawaban(it, a[it.kode]); });
     var payload = {
+      id_kirim: buatIdKirim_(),
       pin: state.session ? state.session.pin : '',
       kode_usaha: ju.prefix + '-' + a.jenisUsahaKode + '-' + a.kode_seq,
       sektor: a.sektor === 'produksi' ? 'Produksi' : 'Dagang-Jasa',

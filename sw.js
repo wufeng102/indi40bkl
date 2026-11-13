@@ -17,7 +17,7 @@
  * cache dinaikkan), config.js SENGAJA tidak ikut aturan cache file lain di
  * bawah — lihat penanganan khusus di fetch handler paling bawah.
  */
-var CACHE_NAME = 'indi40-umkm-shell-v5';
+var CACHE_NAME = 'indi40-umkm-shell-v6';
 
 // Hanya file "cangkang" aplikasi (bukan data) yang disimpan di cache.
 // v2: menambahkan dashboard.html/.css/.js + manifest-dashboard.json supaya
